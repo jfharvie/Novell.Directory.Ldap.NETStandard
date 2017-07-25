@@ -2381,11 +2381,7 @@ namespace Novell.Directory.Ldap
         /// </exception>
         public static LdapEntry Read(LdapUrl toGet)
         {
-            var lconn = new LdapConnection();
-            lconn.Connect(toGet.Host, toGet.Port);
-            var toReturn = lconn.Read(toGet.getDN(), toGet.AttributeArray);
-            lconn.Disconnect();
-            return toReturn;
+            return Read(toGet, null);
         }
 
         /// <summary>
@@ -2414,11 +2410,12 @@ namespace Novell.Directory.Ldap
         /// </exception>
         public static LdapEntry Read(LdapUrl toGet, LdapSearchConstraints cons)
         {
-            var lconn = new LdapConnection();
-            lconn.Connect(toGet.Host, toGet.Port);
-            var toReturn = lconn.Read(toGet.getDN(), toGet.AttributeArray, cons);
-            lconn.Disconnect();
-            return toReturn;
+            using (var lconn = new LdapConnection())
+            {
+                lconn.Connect(toGet.Host, toGet.Port);
+                var toReturn = lconn.Read(toGet.getDN(), toGet.AttributeArray, cons);
+                return toReturn;
+            }                
         }
 
         //*************************************************************************
